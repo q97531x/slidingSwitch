@@ -6,7 +6,9 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 
 /**
  * Created by weeboos on 2017/3/13.
@@ -20,7 +22,14 @@ public class SlidingButton extends View {
     private int width,height;
     //属性动画
     private ValueAnimator valueAnimator;
-
+    //圆的半径
+    private float radius = 20f;
+    //圆的初始坐标
+    private float circleStartX,circleStartY;
+    //偏移量
+    private float offSetLength;
+    //小圆移动的目的地坐标
+    private float destinationX,destinationY;
 
     public SlidingButton(Context context) {
         super(context);
@@ -41,8 +50,20 @@ public class SlidingButton extends View {
         paint.setStyle(Paint.Style.FILL);
         paint.setStrokeCap(Paint.Cap.ROUND);
 
-        valueAnimator = new ValueAnimator();
+        circleStartX = 0;
+        circleStartY = height/2;
 
+        valueAnimator = ValueAnimator.ofFloat(0,1);
+        valueAnimator.setDuration(500);
+        valueAnimator.setInterpolator(new LinearInterpolator());
+        valueAnimator.setRepeatCount(1);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                offSetLength = destinationX*((float)valueAnimator.getAnimatedValue());
+                invalidate();
+            }
+        });
     }
 
     @Override
@@ -58,6 +79,34 @@ public class SlidingButton extends View {
 
 
         canvas.drawLine(0,height/2,width,height/2,paint);
+        canvas.drawCircle(circleStartX+radius+offSetLength,height/2,radius,paint);
 
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                //按下事件
+                circleStartX = 0;
+                destinationX = event.getX();
+                valueAnimator.start();
+                break;
+            case MotionEvent.ACTION_UP:
+                //抬起事件
+                if(event.getX()>width/2){
+                    //点击的位置大于控件宽度的一半,将其移动至终点
+                    circleStartX = destinationX;
+                    destinationX = width;
+                    valueAnimator.start();
+                }else {
+                    circleStartX = 0;
+                    valueAnimator.setFloatValues(1,0);
+                    destinationX = event.getX();
+                    valueAnimator.start();
+                }
+                break;
+        };
+        return true;
     }
 }
