@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Sliding.iml" filepath="$PROJECT_DIR$/Sliding.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/slidingSwitch.iml" filepath="$PROJECT_DIR$/slidingSwitch.iml" />
       <module fileurl="file://$PROJECT_DIR$/slidingswitch/slidingswitch.iml" filepath="$PROJECT_DIR$/slidingswitch/slidingswitch.iml" />
     </modules>
   </component>
