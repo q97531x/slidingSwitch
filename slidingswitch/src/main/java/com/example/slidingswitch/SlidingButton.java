@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.BounceInterpolator;
 import android.view.animation.LinearInterpolator;
 
 /**
@@ -54,9 +55,9 @@ public class SlidingButton extends View {
         circleStartY = height/2;
 
         valueAnimator = ValueAnimator.ofFloat(0,1);
-        valueAnimator.setDuration(500);
-        valueAnimator.setInterpolator(new LinearInterpolator());
-        valueAnimator.setRepeatCount(1);
+        valueAnimator.setDuration(1000);
+        valueAnimator.setInterpolator(new BounceInterpolator());
+        valueAnimator.setRepeatCount(0);
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
@@ -88,7 +89,8 @@ public class SlidingButton extends View {
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
                 //按下事件
-                circleStartX = 0;
+                valueAnimator.setFloatValues(0,1);
+                circleStartX = destinationX;
                 destinationX = event.getX();
                 valueAnimator.start();
                 break;
@@ -96,11 +98,12 @@ public class SlidingButton extends View {
                 //抬起事件
                 if(event.getX()>width/2){
                     //点击的位置大于控件宽度的一半,将其移动至终点
-                    circleStartX = destinationX;
-                    destinationX = width;
+                    valueAnimator.setFloatValues(0,1);
+
+                    destinationX = width-radius*2-circleStartX;
+                    circleStartX = 0;
                     valueAnimator.start();
                 }else {
-                    circleStartX = 0;
                     valueAnimator.setFloatValues(1,0);
                     destinationX = event.getX();
                     valueAnimator.start();
